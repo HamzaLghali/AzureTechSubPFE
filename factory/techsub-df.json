@@ -1,0 +1,9 @@
+{
+	"name": "techsub-df",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "4f6dd61d-594a-4908-ad97-f04d944814fb",
+		"tenantId": "14cb4ab4-62b8-45a2-a944-e225383ee1f9"
+	}
+}
