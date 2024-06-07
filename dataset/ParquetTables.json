@@ -1,5 +1,5 @@
 {
-	"name": "ParquetTablePays",
+	"name": "ParquetTables",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStorage1",
