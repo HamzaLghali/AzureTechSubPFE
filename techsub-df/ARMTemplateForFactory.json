@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
 		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://hamzaaccount.dfs.core.windows.net/"
+		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://TechSubKeyV.vault.azure.net/"
@@ -26,29 +30,12 @@
 		"SqlServerCon_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "hamza"
-		},
-		"AzureDataLakeStorage1_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://hamzaaccount.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CopyAllPipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -70,7 +57,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT TABLE_SCHEMA AS SchemaName,\n       TABLE_NAME AS TableName\nFROM information_schema.tables\nWHERE TABLE_SCHEMA = 'techsub'\nAND TABLE_NAME IN ('appariel', 'arret', 'categoriearret', 'categorieprestation',\n                   'chantier', 'client', 'collaborateur', 'compteanalytique',\n                   'detailbudget', 'diametre', 'fonction', 'pays', 'horaireposte',\n                   'prestation', 'site', 'sondage', 'soustraitant', 'typearret',\n                   'typeprestation', 'zoneaffectaion', 'rapportbudgetmachine', 'rapportjournalier');\n",
+								"sqlReaderQuery": "SELECT TABLE_SCHEMA AS SchemaName,\n       TABLE_NAME AS TableName\nFROM information_schema.tables\nWHERE TABLE_SCHEMA = 'techsub'\nAND TABLE_NAME IN ('appariel', 'arret', 'categoriearret', 'categorieprestation',\n                   'chantier', 'client', 'collaborateur', 'compteanalytique',\n                   'detailbudget', 'diametre', 'fonction', 'pays', 'horaireposte',\n                   'prestation', 'site', 'sondage', 'soustraitant', 'typearret',\n                   'typeprestation', 'zoneaffectaion', 'rapportbudgetmachine','rapportjournalier');\n",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -83,7 +70,7 @@
 						}
 					},
 					{
-						"name": "ForEachSchemaTable",
+						"name": "For Each Schema Table",
 						"type": "ForEach",
 						"dependsOn": [
 							{
@@ -116,7 +103,7 @@
 										"source": {
 											"type": "SqlServerSource",
 											"sqlReaderQuery": {
-												"value": "@{concat('SELECT * FROM ', item().SchemaName, '.', item().TableName)}",
+												"value": "@{concat('SELECT * FROM ',item().SchemaName, '.', item().TableName)}",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -143,14 +130,14 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "SqlServerTableC",
+											"referenceName": "SqlServerCopy",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
 									],
 									"outputs": [
 										{
-											"referenceName": "ParquetTables",
+											"referenceName": "ParquetTable",
 											"type": "DatasetReference",
 											"parameters": {
 												"schemaname": {
@@ -176,17 +163,113 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SqlServerTable1')]",
-				"[concat(variables('factoryId'), '/datasets/SqlServerTableC')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetTables')]"
+				"[concat(variables('factoryId'), '/datasets/SqlServerCopy')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetTable')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"name": "[concat(parameters('factoryName'), '/ParquetTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "SelfHosted",
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schemaname": {
+						"type": "string"
+					},
+					"tablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@{concat(dataset().tablename, '.parquet')}",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@{concat(dataset().schemaname, '/',dataset().tablename)}",
+							"type": "Expression"
+						},
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerCopy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServerCon",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
 				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SqlServerCon')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServerCon",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SqlServerCon')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
 			},
 			"dependsOn": []
 		},
@@ -224,100 +307,14 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SqlServerTable1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SqlServerCon",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "techsub",
-					"table": "pays"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SqlServerCon')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParquetTables')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"schemaname": {
-						"type": "string"
-					},
-					"tablename": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@{concat(dataset().tablename,'parquet')}",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@{concat(dataset().schemaname, '/', dataset().tablename)}",
-							"type": "Expression"
-						},
-						"fileSystem": "bronze"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SqlServerTableC')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SqlServerCon",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
+				"type": "SelfHosted",
 				"typeProperties": {}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SqlServerCon')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
