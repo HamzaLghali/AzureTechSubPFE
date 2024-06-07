@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "techsub-df"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://TechSubKeyV.vault.azure.net/"
+		},
+		"SqlServerCon_properties_typeProperties_server": {
+			"value": "DESKTOP-AUM4LGI\\MSSQLSERVER01"
+		},
+		"SqlServerCon_properties_typeProperties_database": {
+			"value": "techsub"
+		},
+		"SqlServerCon_properties_typeProperties_userName": {
+			"value": "hamza"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://hamzaaccount.dfs.core.windows.net/"
+		}
+	}
+}
