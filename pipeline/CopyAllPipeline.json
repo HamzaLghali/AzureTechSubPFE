@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT TABLE_SCHEMA AS SchemaName,\n       TABLE_NAME AS TableName\nFROM information_schema.tables\nWHERE TABLE_SCHEMA = 'techsub'\nAND TABLE_NAME IN ('appariel', 'arret', 'categoriearret', 'categorieprestation',\n                   'chantier', 'client', 'collaborateur', 'compteanalytique',\n                   'detailbudget', 'diametre', 'fonction', 'pays', 'horaireposte',\n                   'prestation', 'site', 'sondage', 'soustraitant', 'typearret',\n                   'typeprestation', 'zoneaffectaion', 'rapportbudgetmachine', 'rapportjournalier');\n",
+						"sqlReaderQuery": "SELECT TABLE_SCHEMA AS SchemaName,\n       TABLE_NAME AS TableName\nFROM information_schema.tables\nWHERE TABLE_SCHEMA = 'techsub'\nAND TABLE_NAME IN ('appariel', 'arret', 'categoriearret', 'categorieprestation',\n                   'chantier', 'client', 'collaborateur', 'compteanalytique',\n                   'detailbudget', 'diametre', 'fonction', 'pays', 'horaireposte',\n                   'prestation', 'site', 'sondage', 'soustraitant', 'typearret',\n                   'typeprestation', 'zoneaffectaion', 'rapportbudgetmachine','rapportjournalier');\n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -29,7 +29,7 @@
 				}
 			},
 			{
-				"name": "ForEachSchemaTable",
+				"name": "For Each Schema Table",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -62,7 +62,7 @@
 								"source": {
 									"type": "SqlServerSource",
 									"sqlReaderQuery": {
-										"value": "@{concat('SELECT * FROM ', item().SchemaName, '.', item().TableName)}",
+										"value": "@{concat('SELECT * FROM ',item().SchemaName, '.', item().TableName)}",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -89,13 +89,13 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "SqlServerTableC",
+									"referenceName": "SqlServerCopy",
 									"type": "DatasetReference"
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "ParquetTables",
+									"referenceName": "ParquetTable",
 									"type": "DatasetReference",
 									"parameters": {
 										"schemaname": {
