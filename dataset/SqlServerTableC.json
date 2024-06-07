@@ -1,0 +1,12 @@
+{
+	"name": "SqlServerTableC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerCon",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
