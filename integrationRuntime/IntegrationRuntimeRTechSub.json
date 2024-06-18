@@ -1,0 +1,6 @@
+{
+	"name": "IntegrationRuntimeRTechSub",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

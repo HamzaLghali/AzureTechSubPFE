@@ -1,0 +1,28 @@
+{
+	"name": "SqlServerConnLS",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "DESKTOP-AUM4LGI\\MSSQLSERVER01",
+			"database": "techsub",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "hamza",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "password"
+			}
+		},
+		"connectVia": {
+			"referenceName": "IntegrationRuntimeRTechSub",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"name": "TechSub-DataFactory",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "366be0fb-b002-4b35-8234-2823cbfd3d45",
+		"tenantId": "f93d5f40-88c0-4650-b8f2-cc4ec3ef6a10"
+	}
+}
