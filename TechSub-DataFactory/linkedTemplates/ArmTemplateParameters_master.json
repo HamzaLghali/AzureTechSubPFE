@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "TechSub-DataFactory"
+		},
+		"AzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
+		"AzureDatabricks2_accessToken": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://hamzalghstorageaccount.dfs.core.windows.net/"
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"value": "0610-154357-4d6df2t8"
+		},
+		"AzureDatabricks2_properties_typeProperties_existingClusterId": {
+			"value": "0610-154357-4d6df2t8"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://KeyTechSub.vault.azure.net/"
+		},
+		"SqlServerCon_properties_typeProperties_server": {
+			"value": "DESKTOP-AUM4LGI\\MSSQLSERVER01"
+		},
+		"SqlServerCon_properties_typeProperties_database": {
+			"value": "techsub"
+		},
+		"SqlServerCon_properties_typeProperties_userName": {
+			"value": "hamza"
+		},
+		"SqlServerConnLS_properties_typeProperties_server": {
+			"value": "DESKTOP-AUM4LGI\\MSSQLSERVER01"
+		},
+		"SqlServerConnLS_properties_typeProperties_database": {
+			"value": "techsub"
+		},
+		"SqlServerConnLS_properties_typeProperties_userName": {
+			"value": "hamza"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
