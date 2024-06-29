@@ -136,7 +136,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"notebookPath": "/Medallion Workspace/BaseNoteBook",
+								"notebookPath": "/Medallion Workspace/Bronze To Silver",
 								"baseParameters": {
 									"table_schema": {
 										"value": "@item().SchemaName",
