@@ -109,6 +109,29 @@
 									}
 								}
 							]
+						},
+						{
+							"name": "ExecuteDatabricksPipeline",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Table",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "DatabricksPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
 						}
 					]
 				}
