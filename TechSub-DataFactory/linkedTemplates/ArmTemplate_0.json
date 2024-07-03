@@ -327,6 +327,49 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataIntoBronze')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AllTables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT TABLE_SCHEMA AS SchemaName,\r\n       TABLE_NAME AS TableName\r\nFROM information_schema.tables\r\nWHERE TABLE_SCHEMA = 'techsub'\r\nAND TABLE_NAME IN ('appariel', 'arret', 'categoriearret', 'categorieprestation','equipement',\r\n                   'chantier', 'client', 'collaborateur', 'compteanalytique',\r\n                   'detailbudget', 'diametre', 'fonction', 'pays', 'horaireposte',\r\n                   'prestation', 'site', 'sondage', 'soustraitant', 'typearret',\r\n                   'typeprestation', 'zoneaffectaion', 'rapportbudgetmachine','rapportjournalier');",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SqlServerSchema",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SqlServerSchema')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LoadDataIntoBronzeLayer')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -496,7 +539,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2024-06-18T11:29:54Z"
+				"lastPublishTime": "2024-06-29T19:07:51Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SqlServerSchema')]",
