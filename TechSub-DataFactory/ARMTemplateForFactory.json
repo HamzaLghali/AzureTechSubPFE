@@ -69,6 +69,42 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/DatabricksPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Notebook",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Repos/lghali.hamza@emsi-edu.ma/AzureDatabricksCICD/notebook/BronzeDatabricks"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks2",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks2')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LoadDataIntoBronze')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -183,6 +219,30 @@
 											}
 										}
 									]
+								},
+								{
+									"name": "ExecuteDatabricksPipeline",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Table",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "DatabricksPipeline",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
 								}
 							]
 						}
@@ -196,7 +256,8 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SqlServerSchema')]",
 				"[concat(variables('factoryId'), '/datasets/SqlServerTableNew')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetNew')]"
+				"[concat(variables('factoryId'), '/datasets/ParquetNew')]",
+				"[concat(variables('factoryId'), '/pipelines/DatabricksPipeline')]"
 			]
 		},
 		{
