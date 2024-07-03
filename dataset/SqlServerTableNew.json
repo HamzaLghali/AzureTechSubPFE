@@ -1,0 +1,12 @@
+{
+	"name": "SqlServerTableNew",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerConnLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
