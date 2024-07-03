@@ -1,0 +1,68 @@
+{
+	"name": "ParquetNew",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"schemaname": {
+				"type": "string"
+			},
+			"tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().tablename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().schemaname",
+					"type": "Expression"
+				},
+				"fileSystem": "bronze"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "id",
+				"type": "INT32"
+			},
+			{
+				"name": "name",
+				"type": "UTF8"
+			},
+			{
+				"name": "description",
+				"type": "UTF8"
+			},
+			{
+				"name": "cout",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "etat",
+				"type": "UTF8"
+			},
+			{
+				"name": "UPDATE_DATE",
+				"type": "INT96"
+			},
+			{
+				"name": "CREATE_DATE",
+				"type": "INT96"
+			},
+			{
+				"name": "CREATEDBY",
+				"type": "INT32"
+			}
+		]
+	}
+}
