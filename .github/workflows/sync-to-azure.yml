@@ -1,0 +1,26 @@
+name: Sync to Azure DevOps
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Add Azure DevOps remote
+        run: |
+          git remote add azure https://TechSub:${{ secrets.AZURE_DEVOPS_PAT }}@dev.azure.com/TechSub/TechSubAzure/_git/DataFactorCICD
+
+      - name: Push to Azure DevOps
+        run: |
+          git push azure main
